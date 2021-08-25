@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:learningtuto/recipe.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:learningtuto/recipe_database.dart';
-// import 'package:learningtuto/recipe_screen.dart';
+import 'package:learningtuto/recipe_box.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class RecipeListScreen extends StatefulWidget {
   const RecipeListScreen({Key key}) : super(key: key);
@@ -18,20 +19,19 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       appBar: AppBar(
         title: Text('Mes recettes'),
       ),
-      body: FutureBuilder<List<Recipe>>(
-        future: RecipeDatabase.instance.recipes(),
-        builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
-          if (snapshot.hasData) {
-            List<Recipe> recipes = snapshot.data;
+      body: ValueListenableBuilder(
+        valueListenable: RecipeBox.box.listenable(),
+        builder: (BuildContext context, Box items, _) {
+          List<String> keys = items.keys.cast<String>().toList();
             return ListView.builder(
-              itemCount: recipes.length,
+              itemCount: keys.length,
               itemBuilder: (context, index) {
-                final recipe = recipes[index];
+                final recipe = items.get(keys[index]);
                 return Dismissible(
                   key: Key(recipe.title),
                   onDismissed: (direction) {
                     setState(() {
-                      RecipeDatabase.instance.deleteRecipe(recipe.title);
+                      RecipeBox.box.delete(recipe.key());
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -48,11 +48,8 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                 );
               },
             );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+          
+          
         },
       ),
     );
