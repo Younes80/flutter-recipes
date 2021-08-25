@@ -23,34 +23,38 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         valueListenable: RecipeBox.box.listenable(),
         builder: (BuildContext context, Box items, _) {
           List<String> keys = items.keys.cast<String>().toList();
-            return ListView.builder(
-              itemCount: keys.length,
-              itemBuilder: (context, index) {
-                final recipe = items.get(keys[index]);
-                return Dismissible(
-                  key: Key(recipe.title),
-                  onDismissed: (direction) {
-                    setState(() {
-                      RecipeBox.box.delete(recipe.key());
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${recipe.title} supprimé'),
-                      ),
-                    );
-                  },
-                  background: Container(
-                    color: Colors.red,
-                  ),
-                  child: RecipeItemWidget(
-                    recipe: recipe,
-                  ),
-                );
-              },
-            );
-          
-          
+          return ListView.builder(
+            itemCount: keys.length,
+            itemBuilder: (context, index) {
+              final recipe = items.get(keys[index]);
+              return Dismissible(
+                key: Key(recipe.title),
+                onDismissed: (direction) {
+                  setState(() {
+                    RecipeBox.box.delete(recipe.key());
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${recipe.title} supprimé'),
+                    ),
+                  );
+                },
+                background: Container(
+                  color: Colors.red,
+                ),
+                child: RecipeItemWidget(
+                  recipe: recipe,
+                ),
+              );
+            },
+          );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/newRecipe');
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
