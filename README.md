@@ -1,4 +1,4 @@
-# learningtuto
+# learningtuto - recipe
 
 A new Flutter project.
 
